@@ -2,5 +2,5 @@ homepage: "www.cookieman.it"
 documentation: "https://admin.cookieman.it/resources/gtmcontainer/cookieman_gtm.pdf"
 versions:
   # latest version
-  - sha: 5f02a788b90ae804f86b04aa24af8937e567874a
+  - sha: 46759b1ba14685556d8d04ed232cd54be5cf8bd3
     changeNotes: Initial release.
