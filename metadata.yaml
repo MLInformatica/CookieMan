@@ -3,7 +3,7 @@ documentation: "https://admin.cookieman.it/resources/gtmcontainer/cookieman_gtm.
 versions:
   # latest version
   - sha: aca76acf7cfa4fe415ea98009a0f6dd58f60f8d9
-    changeNotes: Initial release.
+    changeNotes: Updated LICENSE.
   # old version
   - sha: 46759b1ba14685556d8d04ed232cd54be5cf8bd3
     changeNotes: Initial release.
