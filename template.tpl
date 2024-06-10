@@ -1,4 +1,4 @@
-﻿___TERMS_OF_SERVICE___
+___TERMS_OF_SERVICE___
 
 By creating or modifying this file you agree to Google Tag Manager's Community
 Template Gallery Developer Terms of Service available at
@@ -11,7 +11,7 @@ ___INFO___
 {
   "type": "TAG",
   "id": "cvt_temp_public_id",
-  "version": 1,
+  "version": 1.1,
   "securityGroups": [],
   "displayName": "CookieMan CMP for Privacy Compliant",
   "brand": {
@@ -40,6 +40,7 @@ ___TEMPLATE_PARAMETERS___
     "simpleValueType": true,
     "help": "Enter the CookieMan Token, you find the value in your control panel in admin.cookieman.it",
     "notSetText": "Please enter the CookieMan Token",
+    "defaultValue": "",
     "valueValidators": [
       {
         "type": "NON_EMPTY"
@@ -250,7 +251,8 @@ const LocalStorageConsentStates_Base64 = localStorage.getItem(
 const CookieManToken = data.CookieManToken;
 const CookieManLanguage = data.CookieManLanguage;
 const CookieManHost = data.CookieManHost;
-let url = 'https://' + CookieManHost + '.cookieman.it/cookiemanmanager_II.js';
+let url =
+    'https://' + CookieManHost + '.cookieman.it/cookiemanmanager_II-gtag.js';
 
 const waitForUpdate = data.waitForUpdate;
 const urlPassthrough = data.urlPassthrough;
@@ -259,16 +261,19 @@ const adsDataRedaction = data.adsDataRedaction;
 //Debug mode
 const log = data.debug ? logToConsole : () => {};
 
+let defaultConsentKeys = [
+    'ad_storage',
+    'ad_user_data',
+    'ad_personalization',
+    'analytics_storage',
+    'functionality_storage',
+    'personalization_storage',
+    'security_storage',
+];
+
 function CookieMan_SetDefaultConsent() {
-    let defaultConsent = {
-        ad_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied',
-        analytics_storage: 'denied',
-        functionality_storage: 'denied',
-        personalization_storage: 'denied',
-        security_storage: 'denied',
-    };
+    let defaultConsent = {};
+    defaultConsentKeys.forEach((key) => (defaultConsent[key] = 'denied'));
 
     log('CookieMan - Set CookieManDefault Consent', defaultConsent);
 
@@ -298,7 +303,7 @@ function CookieMan_UpdateConsent(opts) {
     };
 
     log('CookieMan - Update Consent States', consentStates);
-    
+
     updateConsentState(consentStates);
 }
 
@@ -344,13 +349,13 @@ if (!hasDefaultConsentState) {
 }
 
 if (LocalStorageConsentStates_Base64) {
-    const defaultConsent = JSON.parse(
+    const userConsents64 = JSON.parse(
         fromBase64(LocalStorageConsentStates_Base64)
     );
 
     log('CookieMan - Update consent states found in local storage');
 
-    CookieMan_UpdateConsent(defaultConsent);
+    CookieMan_UpdateConsent(userConsents64);
 }
 
 function GTM_ConsentModeUpdate(consentStates) {
@@ -375,14 +380,17 @@ if (queryPermission('inject_script', url)) {
 
     log('CookieMan - Script to inject ', cacheBreakUrl);
 
-    setInWindow('ML_CookieMan_DataLayerGTM', {
-        token: CookieManToken,
-        lang: CookieManLanguage,
-        consentModeDefault: consentDefaultStates,
+    setInWindow('ML_CookieMan_DataLayer', {
+        Caller_Token: CookieManToken,
+        Caller_Language: CookieManLanguage,
+        Client_ConsentDefaults: consentDefaultStates,
+        Caller_Identifier: 'GTM',
+        Manager_Host: CookieManHost,
+        GTM_Data: data,
     });
 
     setInWindow(
-        'ML_CookieMan_DataLayerGTM.consentModeUpdate',
+        'ML_CookieMan_DataLayer.ConsentModeUpdate',
         GTM_ConsentModeUpdate
     );
 
@@ -788,7 +796,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "ML_CookieMan_DataLayerGTM"
+                    "string": "ML_CookieMan_DataLayer"
                   },
                   {
                     "type": 8,
@@ -827,7 +835,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "ML_CookieMan_DataLayerGTM.consentModeUpdate"
+                    "string": "ML_CookieMan_DataLayer.ConsentModeUpdate"
                   },
                   {
                     "type": 8,
@@ -917,5 +925,3 @@ scenarios: []
 ___NOTES___
 
 Created on 27/5/2024, 17:19:44
-
-
